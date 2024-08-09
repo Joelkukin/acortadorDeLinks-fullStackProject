@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<!-- saved from url=(0036)https://diego.com.es/tutorial-de-pdo -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        
+                        <link rel="stylesheet" type="text/css" href="./Tutorial de PDO_files/semantic.css">
+            <link rel="stylesheet" type="text/css" href="./Tutorial de PDO_files/sem2.css">
+        
+    <script async="" src="./Tutorial de PDO_files/analytics.js.descargar"></script><script src="./Tutorial de PDO_files/highlight.js.descargar"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <link rel="stylesheet" href="./Tutorial de PDO_files/agate.css">
+
+        <link rel="icon" type="image/x-icon" href="https://diego.com.es/favicon.ico">
+
+        <title>
+        Tutorial de PDO        </title>
+
+        <meta name="description" content="
+        PDO es una extensión de PHP que permite acceder a diferentes sistemas de bases de datos utilizando las mismas funciones">
+                    <script>
+                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+                ga('create', 'UA-62157855-1', 'auto');
+                ga('send', 'pageview');
+            </script>
+            </head>
+
+    <body class="pushable">
+
+        <div class="ui large top fixed menu transition visible" style="display: flex !important;">
+    <div class="ui container">
+
+        <a class="active item" href="https://diego.com.es/">Diego Lázaro</a>
+        <a class="active red item" href="https://angular.diego.com.es/">Angular</a>
+        <a class="item" href="https://leanpub.com/guiadephp">Libro de PHP</a>
+
+        <div class="right item">
+            <a href="https://diego.com.es/tutorial-de-pdo#"><i class="arrow up icon"></i></a>
+        </div>
+    </div>
+</div>
+
+<div class="ui left vertical inverted sidebar labeled icon menu">
+    <a class="item" href="https://diego.com.es/">
+        <i class="home icon"></i>
+        Inicio
+    </a>
+    <a class="active red item" href="https://angular.diego.com.es/">
+        <i class="circle icon"></i>
+        Angular
+    </a>
+</div>
+        <div class="pusher">
+                <div class="ui inverted vertical masthead center aligned segment">
+        <div class="ui container">
+    <div class="ui large secondary inverted pointing menu">
+
+        <a class="toc item">
+            <i class="sidebar icon"></i>
+        </a>
+
+        <a class="active item" href="https://diego.com.es/">Diego Lázaro</a>
+        <a class="item" href="https://diego.com.es/contacto">Contacto</a>
+        <a class="active red item" href="https://angular.diego.com.es/">Angular</a>
+
+        <div class="right item">
+            <a class="ui inverted button" href="https://leanpub.com/guiadephp">Libro de PHP</a>
+        </div>
+
+    </div>
+</div>
+
+            
+                 <div class="ui text container">
+
+                        <div class="ui inverted segment">
+                                                    </div>
+
+                        <h1 class="ui inverted header">
+                            Tutorial de PDO                        </h1>
+
+                        <div class="ui text container diego-subheader">
+                            <h2>PDO es una extensión de PHP que permite acceder a diferentes sistemas de bases de datos utilizando las mismas funciones</h2>
+                        </div>
+
+                 </div>
+
+                </div>
+
+        <div class="main ui container">
+        <div class="ui basic segment">
+
+            
+            
+    
+    <div class="ui yellow message">
+        <i class="close icon"></i>
+        <div class="header">
+            Contenido modificable
+        </div>
+
+        <p>Si ves errores o quieres modificar/añadir contenidos, puedes
+                    <a href="https://github.com/diegotham/certificacion-php/blob/master/7-Databases/6-tutorial-de-pdo.md"><i class="github icon"></i>crear un pull request</a>. Gracias</p>
+            </div>
+
+    
+    <div class="ui basic segment">
+        <p><strong>Indice de contenido</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Introducción</td>
+<td>6. Consultar datos con PDO</td>
+</tr>
+<tr>
+<td>2. Conectar a una base de datos con PDO</td>
+<td>7. Diferencia entre query() y prepare()/execute()</td>
+</tr>
+<tr>
+<td>3. Excepciones y opciones en PDO</td>
+<td>8. Otras funciones de utilidad</td>
+</tr>
+<tr>
+<td>4. Registrar datos con PDO</td>
+<td>9. Transacciones con PDO</td>
+</tr>
+<tr>
+<td>5. Diferencia entre bindParam() y bindValue()</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3>1. Introducción</h3>
+<p><strong>PDO</strong> significa <strong>PHP Data Objects</strong>, <strong>Objetos de Datos de PHP</strong>, una extensión para acceder a bases de datos. PDO permite acceder a diferentes <strong>sistemas de bases de datos</strong> con un controlador específico (<strong>MySQL</strong>, <strong>SQLite</strong>, <strong>Oracle</strong>...) mediante el cual se conecta. Independientemente del sistema utilizado, <strong>se emplearán siempre los mismos métodos</strong>, lo que hace que cambiar de uno a otro resulte más sencillo.</p>
+<p>Para ver los <strong>controladores</strong> (<em><strong>drivers</strong></em>) disponibles en tu servidor, puedes emplear el método <em>getAvailableDrivers()</em>:</p>
+<pre><code class="hljs css"><span class="hljs-tag">print_r</span>(<span class="hljs-rule"><span class="hljs-attribute">PDO</span>:<span class="hljs-value">:<span class="hljs-function">getAvailableDrivers</span>())</span></span>;</code></pre>
+<p>El <strong>sistema PDO</strong> se fundamenta en 3 clases: <strong>PDO</strong>, <strong>PDOStatement</strong> y <strong>PDOException</strong>. La <strong>clase PDO</strong> se encarga de mantener la conexión a la base de datos y otro tipo de conexiones específicas como <strong>transacciones</strong>, además de crear instancias de la clase PDOStatement. Es ésta clase, <strong>PDOStatement</strong>, la que maneja las sentencias SQL y devuelve los resultados. La clase <strong>PDOException</strong> se utiliza para manejar los errores.</p>
+<h3>2. Conectar a una base de datos con PDO</h3>
+<p>El primer argumento de la clase <strong>PDO</strong> es el <strong>DSN</strong>, <strong>Data Source Name</strong>, en el cual se han de especificar el <strong>tipo de base de datos</strong> (<em>mysql</em>), el <strong>host</strong> (<em>localhost</em>) y el <strong>nombre de la base de datos</strong> (se puede especificar también el <strong>puerto</strong>). Diferentes sistemas de bases de datos tienen <strong>distintos métodos para conectarse</strong>. La mayoría se conectan de forma parecida a como se conecta a <strong>MySQL</strong>:</p>
+<pre><code class="hljs php"><span class="hljs-keyword">try</span> {
+    <span class="hljs-variable">$dsn</span> = <span class="hljs-string">"mysql:host=localhost;dbname=$dbname"</span>;
+    <span class="hljs-variable">$dbh</span> = <span class="hljs-keyword">new</span> PDO(<span class="hljs-variable">$dsn</span>, <span class="hljs-variable">$user</span>, <span class="hljs-variable">$password</span>);
+} <span class="hljs-keyword">catch</span> (PDOException <span class="hljs-variable">$e</span>){
+    <span class="hljs-keyword">echo</span> <span class="hljs-variable">$e</span>-&gt;getMessage();
+}</code></pre>
+<p><strong>DBH</strong> significa <strong>Database Handle</strong>, y es el nombre de variable que se suele utilizar para el <strong>objeto PDO</strong>.</p>
+<p>Para cerrar una conexión:</p>
+<pre><code class="hljs php"><span class="hljs-variable">$dbh</span> = <span class="hljs-keyword">null</span>;</code></pre>
+<p>Puedes ver más información acerca de <strong>como conectarse a determinados sistemas de bases de datos</strong> en <a href="http://php.net/manual/es/pdo.drivers.php">php.net</a>.</p>
+<h3>3. Excepciones y opciones con PDO</h3>
+<p><strong>PDO maneja los errores en forma de excepciones</strong>, por lo que la conexión siempre ha de ir encerrada en un bloque try/catch. Se puede (y se debe) especificar el modo de error estableciendo el atributo <em><strong>error mode</strong></em>:</p>
+<pre><code class="hljs php"><span class="hljs-variable">$dbh</span>-&gt;setAttribute(PDO::ATTRR_ERRMODE, PDO::ERRMODE_SILENT);
+<span class="hljs-variable">$dbh</span>-&gt;setAttribute(PDO::ATTRR_ERRMODE, PDO::ERRMODE_WARNING);
+<span class="hljs-variable">$dbh</span>-&gt;setAttribute(PDO::ATTRR_ERRMODE, PDO::ERRMODE_EXCEPTION);</code></pre>
+<p>No importa el modo de error, si existe un fallo en la conexión siempre producirá una excepción, por eso siempre se conecta con try/catch.</p>
+<ul>
+<li><strong>PDO::ERRMODE_SILENT</strong>. Es el <strong>modo de error por defecto</strong>. Si se deja así habrá que comprobar los errores de forma parecida a como se hace con <strong>mysqli</strong>. Se tendrían que emplear <a href="http://php.net/manual/es/pdo.errorcode.php">PDO::errorCode()</a> y <a href="http://php.net/manual/es/pdo.errorinfo.php">PDO::errorInfo()</a> o su versión en PDOStatement <a href="http://php.net/manual/es/pdostatement.errorcode.php">PDOStatement::errorCode()</a> y <a href="http://php.net/manual/es/pdostatement.errorinfo.php">PDOStatement::errorInfo()</a>.</li>
+<li><strong>PDO::ERRMODE_WARNING</strong>. Además de establecer el código de error, PDO emitirá un mensaje E_WARNING. Modo empleado para depurar o hacer pruebas para ver errores sin interrumpir el flujo de la aplicación.</li>
+<li><strong>PDO::ERRMODE_EXCEPTION</strong>. Además de establecer el código de error, PDO lanzará una excepción PDOException y establecerá sus propiedades para luego poder reflejar el error y su información. Este modo se emplea en la mayoría de situaciones, ya que permite manejar los errores y a la vez esconder datos que podrían ayudar a alguien a atacar tu aplicación.</li>
+</ul>
+<p>El <strong>modo de error</strong> se puede aplicar con el método <strong>PDO::setAttribute</strong> o mediante un <strong>array de opciones al instanciar PDO</strong>:</p>
+<pre><code class="hljs php"><span class="hljs-comment">// Con un array de opciones</span>
+<span class="hljs-keyword">try</span> {
+    <span class="hljs-variable">$dsn</span> = <span class="hljs-string">"mysql:host=localhost;dbname=$dbname"</span>;
+    <span class="hljs-variable">$options</span> = <span class="hljs-keyword">array</span>(
+      PDO::ATTR_ERRMODE =&gt; PDO::ERRMODE_EXCEPTION
+    );
+    <span class="hljs-variable">$dbh</span> = <span class="hljs-keyword">new</span> PDO(<span class="hljs-variable">$dsn</span>, <span class="hljs-variable">$user</span>, <span class="hljs-variable">$password</span>);
+} <span class="hljs-keyword">catch</span> (PDOException <span class="hljs-variable">$e</span>){
+    <span class="hljs-keyword">echo</span> <span class="hljs-variable">$e</span>-&gt;getMessage();
+}
+<span class="hljs-comment">// Con un el método PDO::setAttribute</span>
+<span class="hljs-keyword">try</span> {
+    <span class="hljs-variable">$dsn</span> = <span class="hljs-string">"mysql:host=localhost;dbname=$dbname"</span>;
+    <span class="hljs-variable">$dbh</span> = <span class="hljs-keyword">new</span> PDO(<span class="hljs-variable">$dsn</span>, <span class="hljs-variable">$user</span>, <span class="hljs-variable">$password</span>);
+    <span class="hljs-variable">$dbh</span>-&gt;setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} <span class="hljs-keyword">catch</span> (PDOException <span class="hljs-variable">$e</span>){
+    <span class="hljs-keyword">echo</span> <span class="hljs-variable">$e</span>-&gt;getMessage();
+}</code></pre>
+<p>Existen <a href="http://php.net/manual/es/pdo.setattribute.php">más opciones</a> aparte de el <strong>modo de error ATTR_ERRMODE</strong>, algunas de ellas son:</p>
+<ul>
+<li><strong>ATTR_CASE</strong>. Fuerza a los nombres de las columnas a mayúsculas o minúsculas (CASE_LOWER, CASE_UPPER).</li>
+<li><strong>ATTR_TIMEOUT</strong>. Especifica el tiempo de espera en segundos.</li>
+<li><strong>ATTR_STRINGIFY_FETCHES</strong>. Convierte los valores numéricos en cadenas.</li>
+</ul>
+<h3>4. Registrar datos con PDO</h3>
+<p>La <strong>clase PDOStatement</strong> es la que trata las <strong>sentencias SQL</strong>. Una <strong>instancia de PDOStatement</strong> se crea cuando se llama a <strong><em>PDO-&gt;prepare()</em></strong>, y con ese objeto creado se llama a métodos como <em>bindParam()</em> para pasar valores o <em>execute()</em> para ejecutar sentencias. PDO facilita el uso de sentencias preparadas en PHP, que mejoran el rendimiento y la seguridad de la aplicación. Cuando se <strong>obtienen, insertan o actualizan datos</strong>, el esquema es: <strong>PREPARE -&gt; [BIND] -&gt; EXECUTE</strong>. Se pueden indicar los parámetros en la sentencia con un interrogante "<strong>?</strong>" o mediante un <strong>nombre específico</strong>.</p>
+<ul>
+<li>Utilizando interrogantes para los valores</li>
+</ul>
+<pre><code class="hljs php"><span class="hljs-comment">// Prepare</span>
+<span class="hljs-variable">$stmt</span> = <span class="hljs-variable">$dbh</span>-&gt;prepare(<span class="hljs-string">"INSERT INTO Clientes (nombre, ciudad) VALUES (?, ?)"</span>);
+<span class="hljs-comment">// Bind</span>
+<span class="hljs-variable">$nombre</span> = <span class="hljs-string">"Peter"</span>;
+<span class="hljs-variable">$ciudad</span> = <span class="hljs-string">"Madrid"</span>;
+<span class="hljs-variable">$stmt</span>-&gt;bindParam(<span class="hljs-number">1</span>, <span class="hljs-variable">$nombre</span>);
+<span class="hljs-variable">$stmt</span>-&gt;bindParam(<span class="hljs-number">2</span>, <span class="hljs-variable">$ciudad</span>);
+<span class="hljs-comment">// Excecute</span>
+<span class="hljs-variable">$stmt</span>-&gt;execute();
+<span class="hljs-comment">// Bind</span>
+<span class="hljs-variable">$nombre</span> = <span class="hljs-string">"Martha"</span>;
+<span class="hljs-variable">$ciudad</span> = <span class="hljs-string">"Cáceres"</span>;
+<span class="hljs-variable">$stmt</span>-&gt;bindParam(<span class="hljs-number">1</span>, <span class="hljs-variable">$nombre</span>);
+<span class="hljs-variable">$stmt</span>-&gt;bindParam(<span class="hljs-number">2</span>, <span class="hljs-variable">$ciudad</span>);
+<span class="hljs-comment">// Execute</span>
+<span class="hljs-variable">$stmt</span>-&gt;execute();
+</code></pre>
+<ul>
+<li>Utilizando variables para los valores</li>
+</ul>
+<pre><code class="hljs php"><span class="hljs-comment">// Prepare</span>
+<span class="hljs-variable">$stmt</span> = <span class="hljs-variable">$dbh</span>-&gt;prepare(<span class="hljs-string">"INSERT INTO Clientes (nombre, ciudad) VALUES (:nombre, :ciudad)"</span>);
+<span class="hljs-comment">// Bind</span>
+<span class="hljs-variable">$nombre</span> = <span class="hljs-string">"Charles"</span>;
+<span class="hljs-variable">$ciudad</span> = <span class="hljs-string">"Valladolid"</span>;
+<span class="hljs-variable">$stmt</span>-&gt;bindParam(<span class="hljs-string">':nombre'</span>, <span class="hljs-variable">$nombre</span>);
+<span class="hljs-variable">$stmt</span>-&gt;bindParam(<span class="hljs-string">':ciudad'</span>, <span class="hljs-variable">$ciudad</span>);
+<span class="hljs-comment">// Excecute</span>
+<span class="hljs-variable">$stmt</span>-&gt;execute();
+<span class="hljs-comment">// Bind</span>
+<span class="hljs-variable">$nombre</span> = <span class="hljs-string">"Anne"</span>;
+<span class="hljs-variable">$ciudad</span> = <span class="hljs-string">"Lugo"</span>;
+<span class="hljs-variable">$stmt</span>-&gt;bindParam(<span class="hljs-string">':nombre'</span>, <span class="hljs-variable">$nombre</span>);
+<span class="hljs-variable">$stmt</span>-&gt;bindParam(<span class="hljs-string">':ciudad'</span>, <span class="hljs-variable">$ciudad</span>);
+<span class="hljs-comment">// Execute</span>
+<span class="hljs-variable">$stmt</span>-&gt;execute();</code></pre>
+<p>También existe un <strong>método lazy</strong>, que es <strong>pasando los valores mediante un array</strong> (siempre array, aunque sólo haya un valor) al método <em>execute()</em>:</p>
+<pre><code class="hljs php"><span class="hljs-comment">// Prepare:</span>
+<span class="hljs-variable">$stmt</span> = <span class="hljs-variable">$dbh</span>-&gt;prepare(<span class="hljs-string">"INSERT INTO Clientes (nombre, ciudad) VALUES (:nombre, :ciudad)"</span>);
+<span class="hljs-variable">$nombre</span> = <span class="hljs-string">"Luis"</span>;
+<span class="hljs-variable">$ciudad</span> = <span class="hljs-string">"Barcelona"</span>;
+<span class="hljs-comment">// Bind y execute:</span>
+<span class="hljs-keyword">if</span>(<span class="hljs-variable">$stmt</span>-&gt;execute(<span class="hljs-keyword">array</span>(<span class="hljs-string">':nombre'</span>=&gt;<span class="hljs-variable">$nombre</span>, <span class="hljs-string">':ciudad'</span>=&gt;<span class="hljs-variable">$ciudad</span>))) {
+    <span class="hljs-keyword">echo</span> <span class="hljs-string">"Se ha creado el nuevo registro!"</span>;
+}</code></pre>
+<p>Es el método <em>execute()</em> el que realmente <strong>envía los datos a la base de datos</strong>. Si no se llama a execute no se obtendrán los resultados sino un error.</p>
+<p>Una característica importante cuando se utilizan variables para pasar los valores es que <strong>se pueden insertar objetos directamente en la base de datos</strong>, suponiendo que <strong>las propiedades coinciden con los nombres de las variables</strong>:</p>
+<pre><code class="hljs php"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Clientes</span>
+</span>{
+    <span class="hljs-keyword">public</span> <span class="hljs-variable">$nombre</span>;
+    <span class="hljs-keyword">public</span> <span class="hljs-variable">$ciudad</span>;
+    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span><span class="hljs-params">(<span class="hljs-variable">$nombre</span>, <span class="hljs-variable">$ciudad</span>)</span></span>{
+        <span class="hljs-variable">$this</span>-&gt;nombre = <span class="hljs-variable">$nombre</span>;
+        <span class="hljs-variable">$this</span>-&gt;ciudad = <span class="hljs-variable">$ciudad</span>;
+    }
+    <span class="hljs-comment">// ....Código de la clase....</span>
+}
+<span class="hljs-variable">$cliente</span> = <span class="hljs-keyword">new</span> Clientes(<span class="hljs-string">"Jennifer"</span>, <span class="hljs-string">"Málaga"</span>);
+<span class="hljs-variable">$stmt</span> = <span class="hljs-variable">$dbh</span>-&gt;prepare(<span class="hljs-string">"INSERT INTO Clientes (nombre, ciudad) VALUES (:nombre, :ciudad)"</span>);
+<span class="hljs-keyword">if</span>(<span class="hljs-variable">$stmt</span>-&gt;execute((<span class="hljs-keyword">array</span>) <span class="hljs-variable">$cliente</span>)){
+    <span class="hljs-keyword">echo</span> <span class="hljs-string">"Se ha creado un nuevo registro!"</span>;
+};</code></pre>
+<h3>5. Diferencia entre bindParam() y bindValue()</h3>
+<p>Existen dos métodos para enlazar valores: <em>bindParam()</em> y <em>bindValue()</em>:</p>
+<ul>
+<li>Con <em>bindParam()</em> la variable es enlazada como una referencia y <strong>sólo será evaluada cuando se llame a <em>execute()</em></strong>:</li>
+</ul>
+<pre><code class="hljs php"><span class="hljs-comment">// Prepare:</span>
+<span class="hljs-variable">$stmt</span> = <span class="hljs-variable">$dbh</span>-&gt;prepare(<span class="hljs-string">"INSERT INTO Clientes (nombre) VALUES (:nombre)"</span>);
+<span class="hljs-variable">$nombre</span> = <span class="hljs-string">"Morgan"</span>;
+<span class="hljs-comment">// Bind</span>
+<span class="hljs-variable">$stmt</span>-&gt;bindParam(<span class="hljs-string">':nombre'</span>, <span class="hljs-variable">$nombre</span>); <span class="hljs-comment">// Se enlaza a la variable $nombre</span>
+<span class="hljs-comment">// Si ahora cambiamos el valor de $nombre:</span>
+<span class="hljs-variable">$nombre</span> = <span class="hljs-string">"John"</span>;
+<span class="hljs-variable">$stmt</span>-&gt;execute(); <span class="hljs-comment">// Se insertará el cliente con el nombre John</span></code></pre>
+<ul>
+<li>Con <em>bindValue()</em> se enlaza el valor de la variable y <strong>permanece hasta execute()</strong>:</li>
+</ul>
+<pre><code class="hljs php"><span class="hljs-comment">// Prepare:</span>
+<span class="hljs-variable">$stmt</span> = <span class="hljs-variable">$dbh</span>-&gt;prepare(<span class="hljs-string">"INSERT INTO Clientes (nombre) VALUES (:nombre)"</span>);
+<span class="hljs-variable">$nombre</span> = <span class="hljs-string">"Morgan"</span>;
+<span class="hljs-comment">// Bind</span>
+<span class="hljs-variable">$stmt</span>-&gt;bindValue(<span class="hljs-string">':nombre'</span>, <span class="hljs-variable">$nombre</span>); <span class="hljs-comment">// Se enlaza al valor Morgan</span>
+<span class="hljs-comment">// Si ahora cambiamos el valor de $nombre:</span>
+<span class="hljs-variable">$nombre</span> = <span class="hljs-string">"John"</span>;
+<span class="hljs-variable">$stmt</span>-&gt;execute(); <span class="hljs-comment">// Se insertará el cliente con el nombre Morgan</span></code></pre>
+<p>En la práctica <em>bindValue()</em> se suele usar cuando se tienen que insertar datos sólo una vez, y <em>bindParam()</em> cuando se tienen que pasar datos múltiples (desde un array por ejemplo).</p>
+<p>Ambas funciones aceptan un <strong>tercer parámetro</strong>, que define el tipo de dato que se espera. Los <em><strong>data types</strong></em> más utilizados son: PDO::PARAM_BOOL (<em>booleano</em>), PDO::PARAM_NULL (<em>null</em>), PDO::PARAM_INT (<em>integer</em>) y PDO::PARAM_STR (<em>string</em>).</p>
+<h3>6. Consultar datos con PDO</h3>
+<p>La <strong>consulta de datos</strong> se realiza mediante <strong>PDOStatement::fetch</strong>, que <strong>obtiene la siguiente fila de un conjunto de resultados</strong>. Antes de llamar a fetch (o durante) hay que especificar como se quieren devolver los datos:</p>
+<ul>
+<li><strong>PDO::FETCH_ASSOC</strong>: devuelve un array indexado cuyos keys son el <strong>nombre de las columnas</strong>.</li>
+<li><strong>PDO::FETCH_NUM</strong>: devuelve un array indexado cuyos keys son <strong>números</strong>.</li>
+<li><strong>PDO::FETCH_BOTH</strong>: valor por defecto. Devuelve un array indexado cuyos keys son tanto el <strong>nombre de las columnas</strong> como <strong>números</strong>.</li>
+<li><strong>PDO::FETCH_BOUND</strong>: asigna los valores de las columnas a las variables establecidas con el método <a href="http://php.net/manual/es/pdostatement.bindcolumn.php">PDOStatement::bindColumn</a>.</li>
+<li><strong>PDO::FETCH_CLASS</strong>: asigna los valores de las columnas a propiedades de una clase. Creará las propiedades si éstas no existen.</li>
+<li><strong>PDO::FETCH_INTO</strong>: actualiza una instancia existente de una clase.</li>
+<li><strong>PDO::FETCH_OBJ</strong>: devuelve un objeto anónimo con nombres de propiedades que corresponden a las columnas. </li>
+<li><strong>PDO::FETCH_LAZY</strong>: combina <strong>PDO::FETCH_BOTH</strong> y <strong>PDO::FETCH_OBJ</strong>, creando los nombres de las propiedades del objeto tal como se accedieron.</li>
+</ul>
+<p>Los más utilizados son <strong>FETCH_ASSOC</strong>, <strong>FETCH_OBJ, FETCH_BOUND</strong> y <strong>FETCH_CLASS. </strong>Vamos a poner un ejemplo de los dos primeros:</p>
+<pre><code class="hljs php"><span class="hljs-comment">// FETCH_ASSOC</span>
+<span class="hljs-variable">$stmt</span> = <span class="hljs-variable">$dbh</span>-&gt;prepare(<span class="hljs-string">"SELECT * FROM Clientes"</span>);
+<span class="hljs-comment">// Especificamos el fetch mode antes de llamar a fetch()</span>
+<span class="hljs-variable">$stmt</span>-&gt;setFetchMode(PDO::FETCH_ASSOC);
+<span class="hljs-comment">// Ejecutamos</span>
+<span class="hljs-variable">$stmt</span>-&gt;execute();
+<span class="hljs-comment">// Mostramos los resultados</span>
+<span class="hljs-keyword">while</span> (<span class="hljs-variable">$row</span> = <span class="hljs-variable">$stmt</span>-&gt;fetch()){
+    <span class="hljs-keyword">echo</span> <span class="hljs-string">"Nombre: {$row["</span>nombre<span class="hljs-string">"]} &lt;br&gt;"</span>;
+    <span class="hljs-keyword">echo</span> <span class="hljs-string">"Ciudad: {$row["</span>ciudad<span class="hljs-string">"]} &lt;br&gt;&lt;br&gt;"</span>;
+}
+<span class="hljs-comment">// FETCH_OBJ</span>
+<span class="hljs-variable">$stmt</span> = <span class="hljs-variable">$dbh</span>-&gt;prepare(<span class="hljs-string">"SELECT * FROM Clientes"</span>);
+<span class="hljs-comment">// Ejecutamos</span>
+<span class="hljs-variable">$stmt</span>-&gt;execute();
+<span class="hljs-comment">// Ahora vamos a indicar el fetch mode cuando llamamos a fetch:</span>
+<span class="hljs-keyword">while</span>(<span class="hljs-variable">$row</span> = <span class="hljs-variable">$stmt</span>-&gt;fetch(PDO::FETCH_OBJ)){
+    <span class="hljs-keyword">echo</span> <span class="hljs-string">"Nombre: "</span> . <span class="hljs-variable">$row</span>-&gt;nombre . <span class="hljs-string">"&lt;br&gt;"</span>;
+    <span class="hljs-keyword">echo</span> <span class="hljs-string">"Ciudad: "</span> . <span class="hljs-variable">$row</span>-&gt;ciudad . <span class="hljs-string">"&lt;br&gt;"</span>;
+}</code></pre>
+<p>Con <strong>FETCH_BOUND</strong> debemos emplear el método <em>bindColumn()</em>:</p>
+<pre><code class="hljs php"><span class="hljs-comment">// Preparamos</span>
+<span class="hljs-variable">$stmt</span> = <span class="hljs-variable">$dbh</span>-&gt;prepare(<span class="hljs-string">"SELECT nombre, ciudad FROM Clientes"</span>);
+<span class="hljs-comment">// Ejecutamos</span>
+<span class="hljs-variable">$stmt</span>-&gt;execute();
+<span class="hljs-comment">// bindColumn</span>
+<span class="hljs-variable">$stmt</span>-&gt;bindColumn(<span class="hljs-number">1</span>, <span class="hljs-variable">$nombre</span>);
+<span class="hljs-variable">$stmt</span>-&gt;bindColumn(<span class="hljs-string">'ciudad'</span>, <span class="hljs-variable">$ciudad</span>);
+<span class="hljs-keyword">while</span> (<span class="hljs-variable">$row</span> = <span class="hljs-variable">$stmt</span>-&gt;fetch(PDO::FETCH_BOUND)) {
+    <span class="hljs-variable">$cliente</span> = <span class="hljs-variable">$nombre</span> . <span class="hljs-string">": "</span> . <span class="hljs-variable">$ciudad</span>;
+    <span class="hljs-keyword">echo</span> <span class="hljs-variable">$cliente</span> . <span class="hljs-string">"&lt;br&gt;"</span>;
+}</code></pre>
+<p>El estilo de devolver los datos <strong>FETCH_CLASS</strong> es algo más complejo: <strong>devuelve los datos directamente a una clase</strong>. Las propiedades del objeto se establecen ANTES de llamar al <strong>constructor</strong>. Si hay nombres de columnas que no tienen una propiedad creada para cada una, se crean como <em><strong>public</strong></em>. <strong>Si los datos necesitan una transformación antes de que salgan de la base de datos</strong>, se puede hacer automáticamente cada vez que se crea un objeto:</p>
+<pre><code class="hljs php"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Clientes</span>
+</span>{
+    <span class="hljs-keyword">public</span> <span class="hljs-variable">$nombre</span>;
+    <span class="hljs-keyword">public</span> <span class="hljs-variable">$ciudad</span>;
+    <span class="hljs-keyword">public</span> <span class="hljs-variable">$otros</span>;
+    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span><span class="hljs-params">(<span class="hljs-variable">$otros</span> = <span class="hljs-string">''</span>)</span></span>{
+        <span class="hljs-variable">$this</span>-&gt;nombre = strtoupper(<span class="hljs-variable">$this</span>-&gt;nombre);
+        <span class="hljs-variable">$this</span>-&gt;ciudad = mb_substr(<span class="hljs-variable">$this</span>-&gt;ciudad, <span class="hljs-number">0</span>, <span class="hljs-number">3</span>);
+        <span class="hljs-variable">$this</span>-&gt;otros = <span class="hljs-variable">$otros</span>;
+    }
+    <span class="hljs-comment">// ....Código de la clase....</span>
+}
+<span class="hljs-variable">$stmt</span> = <span class="hljs-variable">$dbh</span>-&gt;prepare(<span class="hljs-string">"SELECT * FROM Clientes"</span>);
+<span class="hljs-variable">$stmt</span>-&gt;setFetchMode(PDO::FETCH_CLASS, <span class="hljs-string">'Clientes'</span>);
+<span class="hljs-variable">$stmt</span>-&gt;execute();
+<span class="hljs-keyword">while</span> (<span class="hljs-variable">$objeto</span> = <span class="hljs-variable">$stmt</span>-&gt;fetch()){
+    <span class="hljs-keyword">echo</span> <span class="hljs-variable">$objeto</span>-&gt;nombre . <span class="hljs-string">" -&gt; "</span>;
+    <span class="hljs-keyword">echo</span> <span class="hljs-variable">$objeto</span>-&gt;ciudad . <span class="hljs-string">"&lt;br&gt;"</span>;
+}</code></pre>
+<p>Con lo anterior hemos podido modificar cómo queríamos mostrar nombre y ciudad de cada registro. A nombre lo hemos puesto en mayúsculas y de ciudad sólo hemos mostrado las tres primeras letras.</p>
+<p>Si lo que quieres es <strong>llamar al constructor ANTES de que se asignen los datos</strong>, se hace lo siguiente:</p>
+<pre><code class="hljs php"><span class="hljs-variable">$stmt</span>-&gt;setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, <span class="hljs-string">'Clientes'</span>;</code></pre>
+<p>Si en el ejemplo anterior añadimos PDO::FETCH_PROPS_LATE, el nombre y la ciudad se mostrarán como aparecen en la base de datos.</p>
+<p>También se pueden <strong>pasar argumentos al constructor</strong> cuando se quieren devolver datos en objetos con PDO:</p>
+<pre><code class="hljs php"><span class="hljs-variable">$stmt</span>-&gt;setFetchMode(PDO::FETCH_CLASS, <span class="hljs-string">'Clientes'</span>, <span class="hljs-keyword">array</span>(<span class="hljs-string">'masdatos'</span>);</code></pre>
+<p>O incluso <strong>datos diferentes para cada objeto</strong>:</p>
+<pre><code class="hljs php"><span class="hljs-variable">$i</span> = <span class="hljs-number">0</span>;
+<span class="hljs-keyword">while</span> (<span class="hljs-variable">$row</span> = <span class="hljs-variable">$stmt</span>-&gt;fetch(PDO::FETCH_CLASS, <span class="hljs-string">'Clientes'</span>, <span class="hljs-keyword">array</span>(<span class="hljs-variable">$i</span>))){
+    <span class="hljs-comment">// Código para hacer algo</span>
+    <span class="hljs-variable">$i</span>++;
+}</code></pre>
+<p>Finalmente, para la consulta de datos también se puede emplear directamente <em><strong>PDOStatement::fetchAll()</strong></em>, que devuelve un <strong>array con todas las filas devueltas por la base de datos</strong> con las que poder iterar. También acepta estilos de devolución:</p>
+<pre><code class="hljs php"><span class="hljs-comment">// fetchAll() con PDO::FETCH_ASSOC</span>
+<span class="hljs-variable">$stmt</span> = <span class="hljs-variable">$dbh</span>-&gt;prepare(<span class="hljs-string">"SELECT * FROM Clientes"</span>);
+<span class="hljs-variable">$stmt</span>-&gt;execute();
+<span class="hljs-variable">$clientes</span> = <span class="hljs-variable">$stmt</span>-&gt;fetchAll(PDO::FETCH_ASSOC);
+<span class="hljs-keyword">foreach</span>(<span class="hljs-variable">$clientes</span> <span class="hljs-keyword">as</span> <span class="hljs-variable">$cliente</span>){
+    <span class="hljs-keyword">echo</span> <span class="hljs-variable">$cliente</span>[<span class="hljs-string">'nombre'</span>] . <span class="hljs-string">"&lt;br&gt;"</span>;
+}
+<span class="hljs-comment">// fetchAll() con PDO::FETCH_OBJ</span>
+<span class="hljs-variable">$stmt</span> = <span class="hljs-variable">$dbh</span>-&gt;prepare(<span class="hljs-string">"SELECT * FROM Clientes"</span>);
+<span class="hljs-variable">$stmt</span>-&gt;execute();
+<span class="hljs-variable">$clientes</span> = <span class="hljs-variable">$stmt</span>-&gt;fetchAll(PDO::FETCH_OBJ);
+<span class="hljs-keyword">foreach</span> (<span class="hljs-variable">$clientes</span> <span class="hljs-keyword">as</span> <span class="hljs-variable">$cliente</span>){
+    <span class="hljs-keyword">echo</span> <span class="hljs-variable">$cliente</span>-&gt;nombre . <span class="hljs-string">"&lt;br&gt;"</span>;
+}</code></pre>
+<h3>7. Diferencia entre query() y prepare()/execute()</h3>
+<p>En los ejemplos anteriores para las <strong>sentencias en PDO</strong>, no se ha introducido el método <em>query()</em>. Este método ejecuta la sentencia directamente y necesita que se escapen los datos adecuadamente para evitar <a href="http://diego.com.es/ataques-sql-injection-en-php">ataques SQL Injection</a> y otros problemas. </p>
+<p><em>execute()</em> ejecuta una sentencia preparada lo que permite enlazar parámetros y evitar tener que escapar los parámetros. <em>execute()</em> también tiene mejor rendimiento si se repite una sentencia múltiples veces, ya que se compila en el servidor de bases de datos sólo una vez.</p>
+<p>Ya hemos visto <strong>como funcionan las sentencias preparadas</strong> con <em>prepare()</em> y <em>execute()</em>, vamos a ver un ejemplo con query():</p>
+<pre><code class="hljs php"><span class="hljs-variable">$stmt</span> = <span class="hljs-variable">$dbh</span>-&gt;query(<span class="hljs-string">"SELECT * FROM Clientes"</span>);
+<span class="hljs-variable">$clientes</span> = <span class="hljs-variable">$stmt</span>-&gt;fetchAll(PDO::FETCH_OBJ);
+<span class="hljs-keyword">foreach</span> (<span class="hljs-variable">$clientes</span> <span class="hljs-keyword">as</span> <span class="hljs-variable">$cliente</span>){
+    <span class="hljs-keyword">echo</span> <span class="hljs-variable">$cliente</span>-&gt;nombre . <span class="hljs-string">"&lt;br&gt;"</span>;
+}</code></pre>
+<p>Se cambia <em>prepare</em> por <em>query</em> y se quita el <em>execute</em>.</p>
+<h3>8. Otras funciones de utilidad</h3>
+<p>Existen otras <strong>funciones en PDO</strong> que pueden ser de utilidad:</p>
+<ul>
+<li><strong>PDO::exec()</strong>. Ejecuta una sentencia SQL y devuelve el número de filas afectadas. Devuelve el número de filas <strong>modificadas o borradas</strong>, no devuelve resultados de una secuencia SELECT:</li>
+</ul>
+<pre><code class="hljs php">    <span class="hljs-comment">// Si lo siguiente devuelve 1, es que se ha eliminado correctamente:</span>
+    <span class="hljs-keyword">echo</span> <span class="hljs-variable">$dbh</span>-&gt;exec(<span class="hljs-string">"DELETE FROM Clientes WHERE nombre='Luis'"</span>);
+    <span class="hljs-comment">// No devuelve el número de filas con SELECT, devuelve 0</span>
+    <span class="hljs-keyword">echo</span> <span class="hljs-variable">$dbh</span>-&gt;exec(<span class="hljs-string">"SELECT * FROM Clientes"</span>);
+</code></pre>
+<ul>
+<li><strong>PDO::lastInsertId()</strong>. Este método devuelve el id autoincrementado del último registro en esa conexión:</li>
+</ul>
+<pre><code class="hljs php">    <span class="hljs-variable">$stmt</span> = <span class="hljs-variable">$dbh</span>-&gt;prepare(<span class="hljs-string">"INSERT INTO Clientes (nombre) VALUES (:nombre)"</span>);
+    <span class="hljs-variable">$nombre</span> = <span class="hljs-string">"Angelina"</span>;
+    <span class="hljs-variable">$stmt</span>-&gt;bindValue(<span class="hljs-string">':nombre'</span>, <span class="hljs-variable">$nombre</span>);
+    <span class="hljs-variable">$stmt</span>-&gt;execute();
+    <span class="hljs-keyword">echo</span> <span class="hljs-variable">$dbh</span>-&gt;lastInsertId();
+</code></pre>
+<ul>
+<li><strong>PDOStatement::fetchColumn()</strong>. Devuelve una única columna de la siguiente fila de un conjunto de resultados. La columna se indica con un integer, empezando desde cero. Si no se proporciona valor, obtiene la primera columna.</li>
+</ul>
+<pre><code class="hljs php">    <span class="hljs-variable">$stmt</span> = <span class="hljs-variable">$dbh</span>-&gt;prepare(<span class="hljs-string">"SELECT * FROM Clientes"</span>);
+    <span class="hljs-variable">$stmt</span>-&gt;execute();
+    <span class="hljs-keyword">while</span> (<span class="hljs-variable">$row</span> = <span class="hljs-variable">$stmt</span>-&gt;fetchColumn(<span class="hljs-number">1</span>)){
+        <span class="hljs-keyword">echo</span> <span class="hljs-string">"Ciudad: $row &lt;br&gt;"</span>;
+    }
+</code></pre>
+<ul>
+<li><strong>PDOStatement::rowCount()</strong>. Devuelve el <strong>número de filas afectadas por la última sentencia SQL</strong>:</li>
+</ul>
+<pre><code class="hljs php">    <span class="hljs-variable">$stmt</span> = <span class="hljs-variable">$dbh</span>-&gt;prepare(<span class="hljs-string">"SELECT * FROM Clientes"</span>);
+    <span class="hljs-variable">$stmt</span>-&gt;execute();
+    <span class="hljs-keyword">echo</span> <span class="hljs-variable">$stmt</span>-&gt;rowCount();
+</code></pre>
+<h3>9. Transacciones con PDO</h3>
+<p>Cuando tenemos que ejecutar varias sentencias de vez, como INSERT, es preferible utilizar transacciones ya que agrupa todas las acciones y permite revertirlas todas en caso de que haya algún error. </p>
+<p>Una transacción en PDO comienza con el método <em>PDO::beginTransaction()</em>. Este método <strong>desactiva cualquier otro commit o sentencia SQL o consultas que aún no son commited</strong> hasta que la transacción es <strong>committed</strong> con <em>PDO::commit()</em>. Cuando este método es llamado, todas las acciones que estuvieran pendientes se activan y la conexión a la base de datos vuelve de nuevo a su estado por defecto que es <strong>auto-commit</strong>. Con <em>PDO::rollback()</em> se revierten los cambios realizados durante la transacción.</p>
+<pre><code class="hljs php"><span class="hljs-keyword">try</span> {
+    <span class="hljs-variable">$dbh</span>-&gt;beginTransaction();
+    <span class="hljs-variable">$dbh</span>-&gt;query(<span class="hljs-string">"INSERT INTO Clientes (nombre, ciudad) VALUES ('Leila Birdsall', 'Madrid')"</span>);
+    <span class="hljs-variable">$dbh</span>-&gt;query(<span class="hljs-string">"INSERT INTO Clientes (nombre, ciudad) VALUES ('Brice Osterberg', 'Teruel')"</span>);
+    <span class="hljs-variable">$dbh</span>-&gt;query(<span class="hljs-string">"INSERT INTO Clientes (nombre, ciudad) VALUES ('Latrisha Wagar', 'Valencia')"</span>);
+    <span class="hljs-variable">$dbh</span>-&gt;query(<span class="hljs-string">"INSERT INTO Clientes (nombre, ciudad) VALUES ('Hui Riojas', 'Madrid')"</span>);
+    <span class="hljs-variable">$dbh</span>-&gt;query(<span class="hljs-string">"INSERT INTO Clientes (nombre, ciudad) VALUES ('Frank Scarpa', 'Barcelona')"</span>);
+    <span class="hljs-variable">$dbh</span>-&gt;commit();
+    <span class="hljs-keyword">echo</span> <span class="hljs-string">"Se han introducido los nuevos clientes"</span>;
+} <span class="hljs-keyword">catch</span> (<span class="hljs-keyword">Exception</span> <span class="hljs-variable">$e</span>){
+    <span class="hljs-keyword">echo</span> <span class="hljs-string">"Ha habido algún error"</span>;
+    <span class="hljs-variable">$dbh</span>-&gt;rollback();
+}</code></pre>
+    </div>
+
+        </div>
+    </div>
+
+            <div class="ui vertical footer segment">
+    <div class="ui grid container">
+        <div class="row">
+            <div class="ui one column centered grid">
+                <div class="ui secondary segment">
+                    <div class="ui mini images">
+                        <a href="http://twitter.com/diegotham" target="_blank"><img class="ui image" alt="Twitter Diego Lázaro" src="./Tutorial de PDO_files/twitter.jpg"></a>
+                        <a href="http://github.com/diegotham" target="_blank"><img class="ui image" alt="Github Diego Lázaro" src="./Tutorial de PDO_files/github.jpg"></a>
+                    </div>
+                <p>Copyright © Diego Lázaro 2018</p>
+                    <p>Sitio construido con
+                        <a href="http://symfony.com/" rel="nofollow" target="_blank">Symfony</a> &amp;
+                        <a href="http://semantic-ui.com/" rel="nofollow" target="_blank">Semantic-UI</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>    
+        </div>
+
+                    <script src="./Tutorial de PDO_files/jquery.min.js.descargar"></script>
+            <script src="./Tutorial de PDO_files/semantic.min.js.descargar"></script>
+            <script src="./Tutorial de PDO_files/sem.js.descargar"></script>
+        
+    
+
+
+</body></html>
