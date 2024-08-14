@@ -7,9 +7,15 @@ class Route{
     $uri = trim($uri, "/");
     self::$routes['GET'][$uri] = $callback;
   }
-
+  
   public static function post($uri, $callback){
     $uri = trim($uri, "/");
+    self::$routes['POST'][$uri] = $callback;
+  }
+
+  public static function post_middleware($uri, $callback){
+    $uri = trim($uri, "/");
+    
     self::$routes['POST'][$uri] = $callback;
   }
 
@@ -27,7 +33,7 @@ class Route{
     
     $method = $_SERVER['REQUEST_METHOD'];
     $uri_actual = $_SERVER['REQUEST_URI'];
-    $uri_actual = trim($uri, "/");
+    $uri_actual = trim($uri_actual, "/");
 
     foreach (self::$routes[$method] as $ruta => $callback) {
       if ($ruta == $uri_actual) {

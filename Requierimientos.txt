@@ -1,0 +1,12 @@
+Se solicita hacer un sistema de Login con paginas de login, registro, gestion de permisos de usuario y un acortador de links
+
+PASOS A SEGUIR
+--------------
+1 - Diagrama de contexto
+2 - Estimar tiempo del proyecto
+3 - crear un diagrama de entidades
+4 - crear un diagrama de clases
+5 - identificar carencias y ver tutoriales necesarios
+6 - desarrollar el proyecto
+7 - chequear el tiempo real con el tiempo estimado
+8 - Poner a grabar y recomenzar desde el paso 1
