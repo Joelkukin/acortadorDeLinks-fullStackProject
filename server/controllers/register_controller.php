@@ -24,12 +24,12 @@ function crear_usuario($datos_nuevo_usuario){
 
     if($consulta->affected_rows == 1){
       $nuevo_usuario = new Usuario((array)$datos_nuevo_usuario);
-      $nuevo_usuario = $nuevo_usuario->get();
+      $nuevo_usuario = $nuevo_usuario->get('id');
       
       return array(
         'status' => false,
         'message' => 'El usuario ya esta registrado',
-        'data'=>$nuevo_usuario
+        // 'data'=>$nuevo_usuario // si no está registrado, el usuario no puede ver los datos
       );
     } else {
       //var_dump("<pre><h1>\$datos_nuevo_usuario</h1><br>",(array)$datos_nuevo_usuario,"</pre>");
@@ -40,7 +40,7 @@ function crear_usuario($datos_nuevo_usuario){
       return array(
         'status' => true,
         'message' => 'usuario '.$nuevo_usuario->username.' creado correctamente',
-        'data' => $nuevo_usuario
+        'data' => $nuevo_usuario // si se acaba de registrar, no hay problema en que el usuario vea los datos
       );
     }
 
