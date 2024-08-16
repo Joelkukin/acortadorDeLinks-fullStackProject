@@ -18,20 +18,19 @@ class Usuario {
       'nombre' => "", 
       'partner' => "", 
       'mail' => "", 
-      'tipo' => ""
+      'tipo' => "bd"
     ]
   ){
     // uso de conexion a base de datos
     $this->dbh = $GLOBALS['dbh']; 
-    
+    //var_dump("<pre><h2>\$datos_usuario</h2><br>",$datos_usuario,"</pre>");
     // validacion de parametros ingresados
     if (empty($datos_usuario['username']) || empty($datos_usuario['password'])){
-      echo(
+      var_dump(
         '$datos_usuario["username"] y 
         $datos_usuario["password"] no deben estar vacios'
-      );
+      ) ;
     }
-
 
     // verificacion de existencia del usuario en la base de datos //';
     $consulta = pdo_sql_query($this->dbh,
@@ -41,7 +40,7 @@ class Usuario {
       ]
     );
 
-    print_r($consulta->result[0]);
+    
     $coincidencias = $consulta->result[0]['coincidencias'];
     
     if($coincidencias == 1){
@@ -62,7 +61,14 @@ class Usuario {
     } elseif ($coincidencias == 0){
       // si no existe el usuario, se procede a crear el usuario
       // consulta de creacion de nuevo usuario en base de datos //
-      
+      //$this->id = $datos_usuario['id'];
+      $this->nombre = $datos_usuario['nombre'];
+      $this->partner = $datos_usuario['partner'];
+      $this->username = $datos_usuario['username'];
+      $this->password = $datos_usuario['password'];
+      $this->mail = $datos_usuario['mail'];
+      $this->tipo = $datos_usuario['tipo'];
+
       $sql_insert = "INSERT INTO `usuarios`(
         
         `nombre`, 
@@ -81,14 +87,16 @@ class Usuario {
         :tipo
       )";
   
-      echo pdo_sql_query($this->dbh,$sql_insert, [
+      $stmt_insert = pdo_sql_query($this->dbh,$sql_insert, [
         ':nombre' => $datos_usuario['nombre'],
         ':partner' => $datos_usuario['partner'],
         ':username' => $datos_usuario['username'],
         ':password' => $datos_usuario['password'],
         ':mail' => $datos_usuario['mail'],
         ':tipo' => $datos_usuario['tipo']
-      ])->affected_rows;
+      ]);
+
+      
     }
         
         
@@ -112,7 +120,7 @@ class Usuario {
     $this->mail = isset($registro['mail'])? $registro['mail'] :$this->mail;
     $this->tipo = isset($registro['tipo'])? $registro['tipo'] :$this->tipo;
 
-    return $registro[0][$campo];
+    return $this;
   }
 
   // Hay que resolver por que no impacta este codigo en la base de datos
@@ -124,7 +132,7 @@ class Usuario {
       array_push($sets," `$campo` = '$valor'");
     } 
     $sets = implode(", ", $sets);
-    
+
     $sql = "UPDATE `usuarios` SET ".$sets." WHERE id = '$this->id'";
     $resultado = pdo_sql_query($this->dbh,$sql);
 

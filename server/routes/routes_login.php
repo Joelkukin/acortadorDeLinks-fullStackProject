@@ -12,10 +12,18 @@ Route::post("/login", function (){
     //echo login_user($data->username, $data->password);
 
     // lo ideal seria implementar JWT pero por ahora nos manejaremos con el ID de la sesion
-    echo session_id();
-    
+    header('content-type: text/json');
+    echo json_encode([
+      'status' => true,
+      'message' => 'Login exitoso',
+      'session_id' => session_id()
+    ]);
   }else{
-    echo "usuario o contraseña incorrectos";
+    header('content-type: text/json');
+    echo json_encode([
+      'status' => false,
+      'message' => 'usuario o contraseña incorrectos'
+    ]);
   };
 });
 

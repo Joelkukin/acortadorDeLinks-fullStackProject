@@ -1,15 +1,32 @@
 <?php 
 require_once "../lib/Route.php";
+require_once "../controllers/register_controller.php";
 
 Route::post("/register", function(){
-  if(!isset($_SESSION)){
+  header('content-type: text/json; charset = UTF-8');
+  if(!session_id()){
     # <code>
     $data = json_decode(file_get_contents('php://input')); // capturar datos del http request
     
-    // creamos un usuario
 
+    // creamos un usuario
+    $data = crear_usuario($data);
+      if($data['status']){
+        echo json_encode([
+            'status' => $data['status'],
+            'message' => isset($data['message'])? $data['message'] : null,
+            'data' => isset($data['data'])? $data['data'] : null
+        ]);
+      }else{
+        echo json_encode([
+          'status' => false,
+          'message' => isset($data['message'])? $data['message'] : null,
+          'data' => isset($data['data'])? $data['data'] : null
+        ]);
+      }
     # </code>
   }else{
+    
     echo "cierre la cuenta actual para registrar una nueva cuenta";
   };
 });
