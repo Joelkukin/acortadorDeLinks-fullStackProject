@@ -79,13 +79,9 @@ function pdo_sql_query($dbh, $sql, $params = null){
     try{
         $stmt->execute($params); 
         //echo "consulta ejecutada correctamente!";
-        $i = 0;
-    
-        while ($row = $stmt->fetch()){ 
-            array_push($resultado,$row);
-            $i+=1;
-        }
-        return $resultado;
+        $stmt->affected_rows = $stmt->rowCount();
+        $stmt->result = $stmt->fetchAll();
+        return $stmt;
     }catch (\throwable $e){
         return $e->getMessage();
     }

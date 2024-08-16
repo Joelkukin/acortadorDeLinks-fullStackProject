@@ -8,19 +8,16 @@ function login_user($username, $password){
   $params = [
     ":username" => $username
   ];
-  $resultado = pdo_sql_query($dbh, $sql, $params)[0];
-  if($resultado["password"] == $password){
+  $resultado = pdo_sql_query($dbh, $sql, $params);
+  if($resultado->result[0]['password'] == $password){
     return true;
   } else {
     return false;
   }
 }
 
-// capturar usuario y contraseña de la solicitud HTTP
+function test_login_user(){
+  var_dump( login_user( 'joelkukin', '1234'));
+}
 
-// chequear si el usuario y contraseña coinciden con la base de datos
-
-// true: reenviar a home
-
-// false: reenviar a login
 ?>
