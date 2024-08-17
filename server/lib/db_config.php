@@ -60,11 +60,16 @@ function pdo_start_session($db_config){
             ,[PDO::ATTR_PERSISTENT => true]
         );
         $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION, );
+        return $dbh;
     } catch (PDOException $e){
-        echo $e->getMessage();
+        header('Content-Type : text/json; charset=UTF-8');
+        http_response_code(503);
+        var_dump([
+            'error' => 503,
+            'message' => 'Error de conexión, intente más tarde'
+        ]);
     }
     //
-    return $dbh;
 }
 
 function pdo_sql_query($dbh, $sql, $params = null){

@@ -1,6 +1,6 @@
 <?php 
 // ROUTER
-
+header('text/json; charset=UTF-8');
 // use routes/Route.php";
 require_once "../lib/db_config.php";
 require_once "../lib/Route.php";
