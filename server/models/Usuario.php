@@ -96,17 +96,11 @@ class Usuario {
         ':tipo' => $datos_usuario['tipo']
       ]);
 
-      
     }
-        
-        
   }
 
-  private function sql_query($sql, $params = null){
-    return pdo_sql_query($this->dbh, $sql, $params);
-  }
-  
   public function get($campo = "*"){
+    // trae los datos de las propiedades de éste link de la BD
     $sql = "SELECT $campo FROM usuarios WHERE id LIKE '$this->id'";
     
     $usuario = pdo_sql_query($this->dbh,$sql);

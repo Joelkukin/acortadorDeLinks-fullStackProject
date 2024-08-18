@@ -63,11 +63,11 @@ function pdo_start_session($db_config){
         return $dbh;
     } catch (PDOException $e){
         header('Content-Type : text/json; charset=UTF-8');
-        http_response_code(503);
         var_dump([
             'error' => 503,
             'message' => 'Error de conexión, intente más tarde'
         ]);
+        http_response_code(503);
     }
     //
 }
@@ -88,7 +88,10 @@ function pdo_sql_query($dbh, $sql, $params = null){
         $stmt->result = $stmt->fetchAll();
         return $stmt;
     }catch (\throwable $e){
-        return $e->getMessage();
+        http_response_code(500);
+        echo json_encode([
+            'message' => $e->getMessage()
+        ]);
     }
 }
 

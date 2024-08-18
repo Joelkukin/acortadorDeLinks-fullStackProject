@@ -12,12 +12,14 @@ Route::post("/register", function(){
     // creamos un usuario
     $data = crear_usuario($data);
       if($data['status']){
+        header('Content-Type: text/json; charset: UTF-8');
         echo json_encode([
             'status' => $data['status'],
             'message' => isset($data['message'])? $data['message'] : null,
             'data' => isset($data['data'])? $data['data'] : null
         ]);
       }else{
+        header('Content-Type: text/json; charset: UTF-8');
         echo json_encode([
           'status' => false,
           'message' => isset($data['message'])? $data['message'] : null,

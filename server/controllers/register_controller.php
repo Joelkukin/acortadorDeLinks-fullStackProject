@@ -36,7 +36,7 @@ function crear_usuario($datos_nuevo_usuario){
       $nuevo_usuario = new Usuario((array)$datos_nuevo_usuario);
 
       $nuevo_usuario = $nuevo_usuario->get('id');
-      var_dump("<pre><h1>\$nuevo_usuario</h1><br>",$nuevo_usuario->username,"</pre>");
+      
       return array(
         'status' => true,
         'message' => 'usuario '.$nuevo_usuario->username.' creado correctamente',
