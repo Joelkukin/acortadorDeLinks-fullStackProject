@@ -1,16 +1,96 @@
 <?php 
 require_once "../lib/Route.php";
+require_once "../controllers/links_controller.php";
 
-Route::post("/links", function(){
-  if(isset($_SESSION)){
-    # <code>
+// parámetros buscar
+/* {
+  campo: str,
+  buscar: str,
+  } */
+ 
+ // redirect
+ Route::get("/:id_user/:link_src", function($id_user, $link_src){return redirect($id_user, $link_src);});
+ 
+// buscar
+Route::get("/links/:id_user/:link_src", function($id_user, $link_src){return search_links($id_user, $link_src);});
+
+// traer todo
+Route::get("/links/:id_user", function($id_user){return search_links($id_user);});
+
+// crear
+Route::post("/links/:id_user/create", function($id_user){return create_link($id_user);});
+
+// modificar
+Route::put("/links/:id_user/:link_src", function($id_user, $link_src){return update_link($id_user, $link_src);});
+
+// borrar
+Route::delete("/links/:id_user/:link_src", function($id_user, $link_src){return delete_link($id_user, $link_src);});
+
+
+// parámetros insertar
+/* {
+  campo1: valor1,
+  campo2: valor2,
+  ...
+  campoN: valorN
+  
+} */
+
+/* Route::post("/create", function(){ // insertar
+  if(session_id() !== null){
+    # <code>  solo ejecuta el controlador
     $data = json_decode(file_get_contents('php://input')); // capturar datos del http request
-    
+    echo json_encode(['data' => $data]);
 
     # </code>
   }else{
-    echo "sesion no iniciada ";
-  };
+    header(501);
+    echo json_encode([
+      'error' => 'No hay sesión activa'
+    ]);
+  }
+}); */
+
+// parámetros modificar
+/* {
+  campo1: valor1,
+  campo2: valor2,
+  ...
+  campoN: valorN
+  
+} */
+Route::put("/links", function(){ // modificar
+  if(session_id() !== null){
+    # <code> solo ejecuta el controlador
+    $data = json_decode(file_get_contents('php://input')); // capturar datos del http request
+    echo json_encode(['data' => $data]);
+
+    # </code>
+  }else{
+    header(501);
+    echo json_encode([
+      'error' => 'No hay sesión activa'
+    ]);
+  }
+});
+
+// parámetros borrar
+/* {
+  campo1: [id]
+} */
+Route::delete("/links", function(){ // borrar
+  if(session_id() !== null){
+    # <code> solo ejecuta el controlador
+    $data = json_decode(file_get_contents('php://input')); // capturar datos del http request
+    echo json_encode(['data' => $data]);
+
+    # </code>
+  }else{
+    header(501);
+    echo json_encode([
+      'error' => 'No hay sesión activa'
+    ]);
+  }
 });
 
 ?>

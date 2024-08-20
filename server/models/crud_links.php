@@ -9,6 +9,10 @@ Class Link {
   function __construct(){
     
   }
+
+  function get(){}
+  function set(){}
+  function delete(){}
 }
 
 
