@@ -17,6 +17,7 @@ testing
 *.bkp
 *.xlsx
 *.url
+*.lnk
 Requerimientos.txt
 .vscode/*
 !.vscode/extensions.json
