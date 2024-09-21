@@ -4,10 +4,21 @@ require_once "../controllers/register_controller.php";
 
 Route::post("/register", function(){
   header('content-type: text/json; charset = UTF-8');
-  if(!session_id()){
+  
     # <code>
     $data = json_decode(file_get_contents('php://input')); // capturar datos del http request
     
+    // Validamos que el body sea de la forma
+    /*******************************
+     * {
+     *   username
+     *   password
+     *   nombre
+     *   partner
+     *   mail
+     *   tipo
+     * }
+     ******************************/ 
 
     // creamos un usuario
     $data = crear_usuario($data);
@@ -27,10 +38,7 @@ Route::post("/register", function(){
         ]);
       }
     # </code>
-  }else{
-    
-    echo "cierre la cuenta actual para registrar una nueva cuenta";
-  };
+  
 });
 
 ?>

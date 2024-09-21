@@ -2,22 +2,25 @@
 require_once "../lib/db_config.php";
 
 //  Login
-function login_user($username, $password){
+function login_user_by_credentials($username, $password){
+
+  // Chequeamos si las credenciales están registradas en la base de datos
   $dbh = $GLOBALS['dbh'];
-  $sql = "SELECT `password` FROM usuarios WHERE username = :username"; // obtenemos contraseña correcta
+  $sql = "SELECT `password`, `tipo` FROM usuarios WHERE username = :username"; // obtenemos contraseña registrada
   $params = [
     ":username" => $username
   ];
+  $resultado = pdo_sql_query($dbh, $sql, $params);
   
-    //code...
-    $resultado = pdo_sql_query($dbh, $sql, $params);
-  
-  
-  if($resultado->result !== [] ){ // chequeamos que el usuario exista en la base de datos
-    if($resultado->result[0]['password'] == $password){ // chequeamos que la contraseña sea la correcta
+  // chequeamos que la contraseña recibida coincida con la contraseña correcta
+  if($resultado->result !== [] ){ 
+    if($resultado->result[0]['password'] == $password){ 
       return [
         'status' => true,
-        'message' => 'login successful'
+        'message' => 'login successful',
+        'token' => create_jwt([
+          'type' => $resultado->result[0]['tipo']
+        ])
       ];
     } else {
       return [
@@ -33,8 +36,17 @@ function login_user($username, $password){
   }
 }
 
-function test_login_user(){
-  var_dump( login_user( 'joelkukin', '1234'));
+function login_user_by_token($token){
+  $decoded = verify_jwt($token);
+  $pass = is_object($decoded);
+  // aca podría implementar un control de acceso basado en el rol
+  return [
+    "pass" => $pass
+  ]; 
+}
+
+function test_login_user_by_credentials(){
+  var_dump( login_user_by_credentials( 'joelkukin', '1234'));
 }
 
 ?>

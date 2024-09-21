@@ -3,22 +3,22 @@ use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 require "../vendor/autoload.php";
 
-define('KEY','example_key');
+define('KEY','joel');
 define('ALGO','HS256');
 
 function create_jwt($data){
   $payload = [
-      'exp' => strtotime("now") + 60*60*24,
+      'exp' => strtotime("now") + 60*60, // 1 hora
       'data' => $data
   ];
-  $jwt = JWT::encode($payload, 'joel', ALGO);
+  $jwt = JWT::encode($payload, KEY, ALGO);
   return $jwt;
 }
 
 function verify_jwt($jwt){
 
   try {
-    $jwt = JWT::decode($jwt, new Key('joel', ALGO));
+    $jwt = JWT::decode($jwt, new Key(KEY, ALGO));
     return  $jwt;
     $valid = is_object($jwt);
   } catch (Exception $e) {
@@ -45,6 +45,6 @@ function test_jwt_controller(){
   var_dump($decoded);
 }
 
-test_jwt_controller();
+//test_jwt_controller();
 
 ?>
