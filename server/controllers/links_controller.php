@@ -1,6 +1,6 @@
 <?php
 require_once "../lib/db_config.php";
-require_once "../lib/login_functions.php";
+//require_once "../lib/login_functions.php";
 require_once "../models/Link.php";
 
 define('DATATABLE', 'shortlinks');
@@ -114,7 +114,6 @@ function search_links($criterios, $aprox = false){
       // instanciamos la clase Link con los datos de cada registro 
       $links = $stmt->fetchAll(PDO::FETCH_CLASS, "Link");
       
-  
       return $links;
     }
 

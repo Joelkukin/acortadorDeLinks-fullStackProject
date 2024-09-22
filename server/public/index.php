@@ -16,6 +16,7 @@ require_once "../routes/routes_register.php";
 /* Aca definimos las rutas del sitio */
 require_once "../routes/routes_links.php";
 
+
 // cerrar conexion base de datos
 Route::post("/exit", function(){
   header("location: /login",true,200);

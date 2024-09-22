@@ -7,24 +7,37 @@ require_once "../controllers/links_controller.php";
   campo: str,
   buscar: str,
   } */
- 
+
+ // traer todo
+
+Route::get("/links/:id_user/", function($id_user){
+  
+  echo json_encode(search_links(['owner' => $id_user]));
+});
+
+
  // redirect
- Route::get("/:id_user/:link_src", function($id_user, $link_src){return redirect($id_user, $link_src);});
+Route::get("/:id_user/:link_src", function($id_user, $link_src){
+  
+  redirect($id_user, $link_src);
+});
  
-// buscar
-Route::get("/links/:id_user/:link_src", function($id_user, $link_src){return search_links($id_user, $link_src);});
-
-// traer todo
-Route::get("/links/:id_user", function($id_user){return search_links($id_user);});
-
 // crear
-Route::post("/links/:id_user/create", function($id_user){return create_link($id_user);});
+Route::post("/links/:id_user", function($id_user){
+  echo json_encode( create_link($id_user));
+});
+
 
 // modificar
-Route::put("/links/:id_user/:link_src", function($id_user, $link_src){return update_link($id_user, $link_src);});
+Route::put("/links/:id_user/:link_src", function($id_user, $link_src){
+  echo json_encode( update_link($id_user, $link_src));
+});
 
 // borrar
-Route::delete("/links/:id_user/:link_src", function($id_user, $link_src){return delete_link($id_user, $link_src);});
+Route::delete("/links/:id_user/:link_src", function($id_user, $link_src){
+  echo json_encode( delete_link($id_user, $link_src));
+});
+
 
 
 // parámetros insertar
