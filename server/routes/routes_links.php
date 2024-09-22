@@ -1,6 +1,8 @@
 <?php 
 require_once "../lib/Route.php";
 require_once "../controllers/links_controller.php";
+require_once "../controllers/login_controller.php";
+require_once "../controllers/jwt_controller.php";
 
 // parámetros buscar
 /* {
@@ -9,17 +11,26 @@ require_once "../controllers/links_controller.php";
   } */
 
  // traer todo
-
+header("Content-type: text/json; charset:utf-8");
 Route::get("/links/:id_user/", function($id_user){
-  
-  echo json_encode(search_links(['owner' => $id_user]));
+  /* $token = $_SERVER["HTTP_AUTHORIZATION"]; */
+  $result = verify_jwt();
+  //var_dump($result["valid"]);
+  if($result["valid"]){
+    echo json_encode(search_links(['owner' => $id_user]));
+  } else {
+    echo json_encode([
+      'error' => "access denied"
+    ]);
+  }
 });
 
 
  // redirect
 Route::get("/:id_user/:link_src", function($id_user, $link_src){
   
-  redirect($id_user, $link_src);
+  echo json_encode(redirect($id_user, $link_src));
+
 });
  
 // crear

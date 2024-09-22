@@ -68,6 +68,7 @@ class Route{
   
   
   public static function dispatch() {
+    header('charset = UTF-8');
     $method = $_SERVER['REQUEST_METHOD'];
     $uri_actual = $_SERVER['REQUEST_URI'];
     $uri_actual = trim($uri_actual, "/");
@@ -75,16 +76,18 @@ class Route{
     // buscar en el array de rutas, la que coincida con la uri_actual, luego, ejecutar su callback asociado
     foreach (self::$routes[$method] as $ruta => $callback) {
       
-
+      $uri_has_params = strpos($ruta, ":"); 
+      //var_dump("ruta: ", $ruta);
       $regex = self::pattern_to_regex($ruta);
-      //var_dump("<pre>");
-      //var_dump("regex: ", $regex);
-      //var_dump("uri_actual: ", $uri_actual);
-      $uri_has_params = preg_match_all($regex, $uri_actual, $matches);
-      //var_dump("uri_has_params",$uri_has_params);
-      //var_dump("matches: ", isset($matches)?$matches:null);
+      $rute_match = preg_match_all($regex, $uri_actual, $matches);
+
+      // var_dump("<pre>");
+      // var_dump("regex: ", $regex);
+      // var_dump("uri_actual: ", $uri_actual);
+      // var_dump("uri_has_params",$uri_has_params, strpos(":", "hola"));
+      // var_dump("matches: ", isset($matches)?$matches:null);
       
-      if($uri_has_params){
+      if($uri_has_params !== false && $rute_match){
         //var_dump("matches: ", $matches);
         $patron = $matches[0][0];
         //var_dump("patron: ", $patron);
