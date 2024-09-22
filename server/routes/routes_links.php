@@ -13,7 +13,7 @@ require_once "../controllers/jwt_controller.php";
  // traer todo
 header("Content-type: text/json; charset:utf-8");
 Route::get("/links/:id_user/", function($id_user){
-  /* $token = $_SERVER["HTTP_AUTHORIZATION"]; */
+  // Verificamos si el usuario está logueado
   $result = verify_jwt();
   //var_dump($result["valid"]);
   if($result["valid"]){
@@ -35,18 +35,45 @@ Route::get("/:id_user/:link_src", function($id_user, $link_src){
  
 // crear
 Route::post("/links/:id_user", function($id_user){
-  echo json_encode( create_link($id_user));
+  // Verificamos si el usuario está logueado
+  $result = verify_jwt();
+  //var_dump($result["valid"]);
+  if($result["valid"]){
+    echo json_encode( create_link($id_user));
+  } else {
+    echo json_encode([
+      'error' => "access denied"
+    ]);
+  }
 });
 
 
 // modificar
 Route::put("/links/:id_user/:link_src", function($id_user, $link_src){
-  echo json_encode( update_link($id_user, $link_src));
+  // Verificamos si el usuario está logueado
+  $result = verify_jwt();
+  //var_dump($result["valid"]);
+  if($result["valid"]){  
+    echo json_encode( update_link($id_user, $link_src));
+  } else {
+    echo json_encode([
+      'error' => "access denied"
+    ]);
+  }
 });
 
 // borrar
 Route::delete("/links/:id_user/:link_src", function($id_user, $link_src){
-  echo json_encode( delete_link($id_user, $link_src));
+  // Verificamos si el usuario está logueado
+  $result = verify_jwt();
+  //var_dump($result["valid"]);
+  if($result["valid"]){ 
+    echo json_encode( delete_link($id_user, $link_src));
+  } else {
+    echo json_encode([
+      'error' => "access denied"
+    ]);
+  }
 });
 
 
