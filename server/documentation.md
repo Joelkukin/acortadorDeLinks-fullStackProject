@@ -204,11 +204,3 @@ curl --location --request DELETE 'acort.ar.test/links/test_owner/test_alias' \
 "Link eliminado con éxito"
 ```
 
-### Notas
-
-* Casi odos los puntos de acceso requieren un token JWT válido pasado en el encabezado `Authorization` el cual se genera en el endpoint `Login`.
-* La función `search_links` no está documentada, pero parece ser utilizada en el punto de acceso `GET /links/:id_usuario/`.
-* La función `verify_jwt` no está documentada, pero parece ser utilizada para validar el token JWT.
-* La función `redirect` no está documentada, pero parece ser utilizada en el punto de acceso `GET /:id_usuario/:enlace_fuente`.
-* Las funciones `create_link`, `update_link` y `delete_link` no están documentadas, pero parece ser utilizadas en los respectivos puntos de acceso.
-
