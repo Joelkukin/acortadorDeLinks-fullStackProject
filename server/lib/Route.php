@@ -50,7 +50,7 @@ class Route{
         }
       }
 
-      var_dump("patternParts: ", $patternParts);
+      //var_dump("patternParts: ", $patternParts);
 
       $regex = '/^' . implode("\/",$patternParts) . '$/';
       return $regex;
@@ -77,17 +77,17 @@ class Route{
       
 
       $regex = self::pattern_to_regex($ruta);
-      var_dump("<pre>");
-      var_dump("regex: ", $regex);
-      var_dump("uri_actual: ", $uri_actual);
+      //var_dump("<pre>");
+      //var_dump("regex: ", $regex);
+      //var_dump("uri_actual: ", $uri_actual);
       $uri_has_params = preg_match_all($regex, $uri_actual, $matches);
-      var_dump("uri_has_params",$uri_has_params);
-      var_dump("matches: ", isset($matches)?$matches:null);
+      //var_dump("uri_has_params",$uri_has_params);
+      //var_dump("matches: ", isset($matches)?$matches:null);
       
       if($uri_has_params){
-        var_dump("matches: ", $matches);
+        //var_dump("matches: ", $matches);
         $patron = $matches[0][0];
-        var_dump("patron: ", $patron);
+        //var_dump("patron: ", $patron);
         if($matches[0][0] === $uri_actual){
         array_shift($matches);
         // pasar parámetros de array doble a array simple
@@ -95,7 +95,7 @@ class Route{
         foreach ($matches as $key => $value) {
           $parametros[]=$value[0];
         }
-        var_dump("parametros: ", $parametros);
+        //var_dump("parametros: ", $parametros);
           $callback(...$parametros);
           return;
         };
