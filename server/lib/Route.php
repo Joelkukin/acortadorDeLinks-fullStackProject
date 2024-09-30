@@ -68,11 +68,12 @@ class Route{
   
   
   public static function dispatch() {
-    header('charset = UTF-8');
+    
     $method = $_SERVER['REQUEST_METHOD'];
     $uri_actual = $_SERVER['REQUEST_URI'];
     $uri_actual = trim($uri_actual, "/");
-       
+    
+    
     // buscar en el array de rutas, la que coincida con la uri_actual, luego, ejecutar su callback asociado
     foreach (self::$routes[$method] as $ruta => $callback) {
       
@@ -98,6 +99,10 @@ class Route{
         foreach ($matches as $key => $value) {
           $parametros[]=$value[0];
         }
+
+
+
+        // EJECUTAR CONTROLLER
         //var_dump("parametros: ", $parametros);
           $callback(...$parametros);
           return;

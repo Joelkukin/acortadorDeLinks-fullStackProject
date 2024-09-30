@@ -16,8 +16,8 @@ Route::post("/login", function (){
 
   if(isset($body->username) && isset($body->password)){
     echo json_encode(login_user_by_credentials($body->username, $body->password));
-  } else if(isset($body->token)){
-    echo json_encode(login_user_by_token($body->token));
+  } else {
+    echo json_encode(login_user_by_token());
   }
   
     /* 

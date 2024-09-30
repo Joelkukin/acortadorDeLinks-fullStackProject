@@ -1,6 +1,20 @@
 <?php 
 // ROUTER
-header('text/json; charset=UTF-8');
+  // MANEJAR SOLICITUDES PREFLIGHT
+  if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    header("Access-Control-Allow-Origin: http://localhost:5173");
+    header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+    header("Access-Control-Allow-Headers: Content-Type, Authorization");
+    exit(0);
+  }
+
+
+  // PREPARAR LOS HEADERS DE LA RESPUESTA PARA EL CLIENTE
+  header('charset = UTF-8');
+  header('text/json; charset=UTF-8');
+  header("Access-Control-Allow-Origin: http://localhost:5173");
+  header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+  header("Access-Control-Allow-Headers: Content-Type, Authorization");
 // use routes/Route.php";
 require_once "../lib/db_config.php";
 require_once "../lib/Route.php";
