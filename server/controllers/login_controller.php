@@ -36,9 +36,9 @@ function login_user_by_credentials($username, $password){
   }
 }
 
-function login_user_by_token($token){
-  $decoded = verify_jwt($token);
-  $pass = is_object($decoded);
+function login_user_by_token(){
+  $decoded = verify_jwt();
+  $pass = is_array($decoded)?true:$decoded;
   // aca podría implementar un control de acceso basado en el rol
   return [
     "pass" => $pass

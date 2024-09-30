@@ -22,7 +22,7 @@ function verify_jwt(){
   //var_dump($jwt);
   try {
     $jwt = JWT::decode($jwt, new Key(KEY, ALGO));
-    $valid = is_object($jwt);
+    $valid = is_array($jwt);
     return [
       'data' => $jwt,
       'valid' => $valid
