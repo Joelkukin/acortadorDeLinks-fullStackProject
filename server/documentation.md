@@ -1,206 +1,199 @@
-**Documentación de la API**
-======================
+Documentación de Endpoints - API de Enlaces
+===========================================
 
-## **Puntos de Acceso** 
+Base URL
+--------
 
+`https://api.ejemplo.com`
+Autenticación
 
-### Autenticación:
-______
+-------------
 
-### Generar token de acceso
-`POST /login`
+Todos los endpoints, excepto la redirección, requieren autenticación mediante JWT (JSON Web Token). El token debe ser incluido en el encabezado de la solicitud:
 
-* **Descripción:** Autenticar un usuario y obtener un token JWT
-* **Parámetros:**
-	+ `username`: El nombre de usuario para autenticar
-	+ `password`: La contraseña del usuario para autenticar
-* **Ejemplo:**
-```curl
-curl --location 'acort.ar.test/login' \
---data '{
-    "username": "joelkukn",
-    "password": "1234"
-}'
-```
-* **Respuesta:**
+``` Authorization: Bearer <tu_token_jwt>``` 
+
+---------
+### Login de Usuario
+Endpoint: POST /login
+
+Descripción: Autentica a un usuario utilizando sus credenciales o un token JWT existente.
+
+Cuerpo de la solicitud (login con credenciales): 
 ```json
 {
-    "status": true,
-    "message": "Login successful",
-    "session_id": {
-      "status": true,
-      "message": 'login successful',
-      "token": 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MjcwNDcxMzEsImRhdGEiOnsidHlwZSI6IkNFTyJ9fQ.RZ6ONaNfT5o4p4TX5PUo7wxylRqoVhsqPRr6OXJ-3L4'
-    }
+  "username": "nombre_de_usuario",  
+  "password": "contraseña_del_usuario" 
+} 
+```
+
+Cuerpo de la solicitud (login con token): No se requiere cuerpo. El token JWT debe ser enviado en el encabezado de la solicitud.
+
+Respuesta exitosa (login con credenciales): 
+```json 
+{ 
+  "status": true, 
+  "message": "login successful", 
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." 
+} 
+```
+
+Respuesta fallida (login con credenciales): 
+```json 
+{ 
+  "status": false,
+  "message": "Incorrect username or password"
 }
 ```
 
-## Registro de Usuarios
+Respuesta (login con token): 
+```json 
+{ "pass": true }
+``` 
+o 
 
-### POST /register
-
-* **Descripción:** Crear un nuevo usuario en el sistema
-* **Parámetros:**
-	+ `username`: El nombre de usuario del nuevo usuario
-	+ `password`: La contraseña del nuevo usuario
-	+ `nombre`: El nombre del nuevo usuario
-	+ `partner`: El partner del nuevo usuario
-	+ `mail`: El correo electrónico del nuevo usuario
-	+ `tipo`: El tipo de usuario (admin, usuario, etc.)
-* **Respuesta:**
-	+ Objeto JSON con estado de la operación y mensaje de éxito o error
-	+ Datos del usuario creado si la operación es exitosa
-
-* **Ejemplo:**
-```curl
-curl --location 'acort.ar.test/register' \
---data '{
-    "username" : "test_username", 
-    "password" : "test_password", 
-    "nombre" : "test_nombre", 
-    "partner" : "test_partner", 
-    "mail" : "test_mail", 
-    "tipo" : "test_tipo"
-}
-```
-* **Respuesta:**
-```json
-{
-    "status": true,
-    "message": "El usuario fué Registrado con éxito",
-    "data": {
-      "username" : "test_username", 
-      "password" : "test_password", 
-      "nombre" : "test_nombre", 
-      "partner" : "test_partner", 
-      "mail" : "test_mail", 
-      "tipo" : "test_tipo"
-    }
-}
+```json 
+{ "pass": false }
 ```
 
-==================
+#### Notas:
 
-## Links
-### Buscar Links
-`GET /links/:id_usuario/`
+Si se proporcionan credenciales (username y password), el sistema intentará autenticar al usuario con esas credenciales.
 
-* **Descripción:** Recuperar todos los enlaces para un usuario específico
-* **Parámetros:**
-	+ `id_usuario`: El ID del usuario para recuperar enlaces
-* **Autorización:** `bearer TU_TOKEN_DE_SESION`
+Si no se proporcionan credenciales, el sistema buscará un token JWT en el encabezado de la solicitud y lo validará.
 
-* **Ejemplo:**
-```cUrl
-curl --location 'acort.ar.test/links/test_owner' \
---data ''
-```
+El token JWT generado contiene información sobre el usuario y su tipo (rol).
 
-* **Respuesta:**
+#### Códigos de Estado:
+* `200 OK` : La solicitud se ha procesado correctamente.
+* `401 Unauthorized`: La solicitud no incluye un token de autenticación válido.
+* `404 Not Found`: El enlace solicitado no existe.
+* `500 Internal Server Error`: Error interno del servidor.
 
+
+Autenticación
+Para las solicitudes que requieren autenticación, incluya el token JWT en el encabezado de la solicitud:
+
+``` Authorization: Bearer <tu_token_jwt> ``` 
+
+----------
+
+###  Obtener Enlaces del Usuario
+
+**Endpoint:** `GET /links`
+
+**Descripción:** Recupera todos los enlaces asociados al usuario autenticado.
+
+**Respuesta exitosa:**
 
 ```json
 [
   {
-      "id": 1,
-      "link_src": "Alias",
-      "link_target": "https://www.web_destino.com",
-      "owner": "tu_username",
-      "qr_img": "path_image"
+    "id": 1,
+    "link_src": "ejemplo1",
+    "link_target": "https://www.ejemplo1.com",
+    "owner": "usuario123",
+    "qr_img": "path/to/qr1.png"
   },
-  (...)
+  {
+    "id": 2,
+    "link_src": "ejemplo2",
+    "link_target": "https://www.ejemplo2.com",
+    "owner": "usuario123",
+    "qr_img": "path/to/qr2.png"
+  }
 ]
 ```
-### Usar Link Corto
-`GET /:id_usuario/:link_src`
+### Crear un Nuevo Enlace
 
-* **Descripción:** Redirigir al enlace de destino
-* **Parámetros:**
-	+ `id_user`: El ID del usuario que generó el enlace
-	+ `link_src`: Alias del link
-* **Respuesta:**
-	+ Redirigir al enlace especificado
+**Endpoint:** `POST /links/create`
 
- **Ejemplo:**
-```cUrl
-curl --location 'acort.ar.test/test_owner/link_alias' \
---data ''
-```
+**Descripción:** Crea un nuevo enlace para el usuario autenticado.
 
- **Respuesta:**
-  + Redirección automática
+**Cuerpo de la solicitud:**
 
-
-### Crear Link
-`POST /links/:id_usuario`
-
-* **Descripción:** Crear un nuevo enlace para un usuario específico
-
-* **Autorización:** `bearer TU_TOKEN_DE_SESION`
-
-
-* **Parámetros:**
-	+ `id_usuario`: El ID del usuario para crear el enlace
-	+ `link_data`: Objeto JSON con datos del enlace (por ejemplo, {"title": "Ejemplo", "url": "http://example.com"})
-
-* **Ejemplo:**
 ```json
-curl --location 'acort.ar.test/links/test_owner' \
---data '{
-  "link_src": "test",
-    "link_target": "test_link_target",
-    "owner": "test_owner",
-    "qr_img": "test_path"
+{ 
+	"link_src": "mi-nuevo-enlace", 
+    "link_target": "https://www.mi-sitio-web.com", 
+    "qr_img": "path/to/qr.png" // Opcional 
 }
 ```
-* **Respuesta:**
+**Respuesta exitosa:**
+
 ```json
 {
-    "id": 1,
-    "link_src": "test_alias",
-    "link_target": "test_link_target",
-    "owner": "test_owner",
-    "qr_img": "test_path_qr"
+  "id": 3,
+  "link_src": "mi-nuevo-enlace",
+  "link_target": "https://www.mi-sitio-web.com",
+  "owner": "usuario123",
+  "qr_img": "path/to/qr.png"
 }
 ```
-#### PUT /links/:id_usuario/:link_alias
+### Modificar un Enlace Existente
 
-* **Descripción:** Actualizar un enlace específico para un usuario
-* **Parámetros:**
-	+ `id_usuario`: El ID del usuario que posee el enlace
-	+ `link_alias`: La fuente del enlace para actualizar
-	+ Cuerpo de la solicitud: Objeto JSON con datos del enlace actualizados
-* **Ejemplo:**
-```json
-curl --location 'acort.ar.test/links/test_owner' \
---data '{
-	"link_src": "test_alias"
-}
-```
-* **Respuesta:**
+**Endpoint:** `PUT /links/modify/:link_src`
+
+**Descripción:** Modifica un enlace existente del usuario autenticado.
+
+**Parámetros de ruta:**
+
+* `link_src`: El identificador del enlace a modificar
+
+**Cuerpo de la solicitud:**
+
 ```json
 {
-    "id": 1,
-    "link_src": "test_alias",
-    "link_target": "test_link_target",
-    "owner": "test_owner",
-    "qr_img": "test_path_qr"
+  "link_target": "https://www.nueva-url.com",
+  "qr_img": "path/to/new_qr.png" // Opcional
 }
 ```
 
-#### DELETE /links/:id_usuario/:link_alias
+**Respuesta exitosa:**
 
-* **Descripción:** Eliminar un enlace específico para un usuario
-* **Parámetros:**
-	+ `id_usuario`: El ID del usuario que posee el enlace
-	+ `link_alias`: el alias del enlace a eliminar
-* **Ejemplo:**
 ```json
-curl --location --request DELETE 'acort.ar.test/links/test_owner/test_alias' \
---data ''
+{
+  "id": 3,
+  "link_src": "mi-nuevo-enlace",
+  "link_target": "https://www.nueva-url.com",
+  "owner": "usuario123",
+  "qr_img": "path/to/new_qr.png"
+}
 ```
-* **Respuesta:**
-```json
-"Link eliminado con éxito"
-```
+### Eliminar un Enlace
 
+**Endpoint:** `DELETE /links/delete/:link_src`
+
+**Descripción:** Elimina un enlace existente del usuario autenticado.
+
+**Parámetros de ruta:**
+
+* `link_src`: El identificador del enlace a eliminar
+
+**Respuesta exitosa:**
+
+```json
+{
+  "message": "Link eliminado con éxito"
+}
+```
+### Redireccionar a un Enlace
+
+**Endpoint:** `GET /:id_user/:link_src`
+
+**Descripción:** Redirige a la URL asociada al enlace especificado.
+
+**Parámetros de ruta:**
+
+* `id_user`: El ID del usuario propietario del enlace
+* `link_src`: El identificador del enlace
+
+**Comportamiento:** Este endpoint redirige directamente a la URL asociada al enlace. No requiere autenticación.
+Códigos de Estado
+
+-----------------
+
+* `200 OK` : La solicitud se ha procesado correctamente.
+* `401 Unauthorized`: La solicitud no incluye un token de autenticación válido.
+* `404 Not Found`: El enlace solicitado no existe.
+* `500 Internal Server Error`: Error interno del servidor.
