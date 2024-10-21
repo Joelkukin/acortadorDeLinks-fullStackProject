@@ -18,11 +18,13 @@ function create_jwt($data){
 function verify_jwt(){
   // Rescato los headers de la solicitud http
   $headers = apache_request_headers();
+  
   $jwt = explode(" ", $headers['Authorization'])[1];
   //var_dump($jwt);
   try {
     $jwt = JWT::decode($jwt, new Key(KEY, ALGO));
-    $valid = is_array($jwt);
+    $valid = is_object($jwt);
+    
     return [
       'data' => $jwt,
       'valid' => $valid

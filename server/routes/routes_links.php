@@ -12,136 +12,77 @@ require_once "../controllers/jwt_controller.php";
 
  // traer todo
 header("Content-type: text/json; charset:utf-8");
-Route::get("/links/:id_user/", function($id_user){
+
+function protected_function($funcion,$jwt){
   // Verificamos si el usuario está logueado
-  $result = verify_jwt();
-  //var_dump($result["valid"]);
-  if($result["valid"]){
-    echo json_encode(search_links(['owner' => $id_user]));
-  } else {
-    echo json_encode([
-      'error' => "access denied"
-    ]);
-  }
-});
-
-
- // redirect
-Route::get("/:id_user/:link_src", function($id_user, $link_src){
+  $valid = $jwt['valid'] || null;
   
-  echo json_encode(redirect($id_user, $link_src));
-
-});
- 
-// crear
-Route::post("/links/:id_user", function($id_user){
-  // Verificamos si el usuario está logueado
-  $result = verify_jwt();
-  //var_dump($result["valid"]);
-  if($result["valid"]){
-    echo json_encode( create_link($id_user));
+  // verificamos si el jwt es válido
+  if (is_string($jwt)){
+    http_response_code(401); // Unauthorized
+    echo $jwt;
+  } elseif(is_array($jwt) && $jwt["valid"]){
+    return json_encode($funcion); // ejecuta la funcion pasada por parámetro
   } else {
+    http_response_code(403); // error server side
     echo json_encode([
-      'error' => "access denied"
+      'error' => "access denied",
+      'message' => var_dump( $jwt , $jwt["valid"])
     ]);
   }
+}
+
+
+Route::get("/links", function(){
+  $jwt = verify_jwt();
+  if(is_string($jwt)){
+      echo $jwt;
+    }else{
+      $id_user = $jwt['data']->data->user;
+      echo protected_function(search_links(['owner' => $id_user]), $jwt);
+    }
+
 });
+
+// crear
+Route::post("/links/create", function(){
+  $jwt = verify_jwt();
+    if(is_string($jwt)){
+      echo $jwt;
+    }else{
+      $id_user = $jwt['data']->data->user;
+      echo protected_function( create_link($id_user), $jwt);
+
+    }
+  });
 
 
 // modificar
-Route::put("/links/:id_user/:link_src", function($id_user, $link_src){
-  // Verificamos si el usuario está logueado
-  $result = verify_jwt();
-  //var_dump($result["valid"]);
-  if($result["valid"]){  
-    echo json_encode( update_link($id_user, $link_src));
-  } else {
-    echo json_encode([
-      'error' => "access denied"
-    ]);
-  }
+Route::put("/links/modify/:link_src", function($link_src){
+  $jwt = verify_jwt();
+    if(is_string($jwt)){
+      echo $jwt;
+    }else{
+      $id_user = $jwt['data']->data->user;
+      echo protected_function(update_link($id_user, $link_src), $jwt);
+    }
 });
 
 // borrar
-Route::delete("/links/:id_user/:link_src", function($id_user, $link_src){
-  // Verificamos si el usuario está logueado
-  $result = verify_jwt();
-  //var_dump($result["valid"]);
-  if($result["valid"]){ 
-    echo json_encode( delete_link($id_user, $link_src));
-  } else {
-    echo json_encode([
-      'error' => "access denied"
-    ]);
-  }
+Route::delete("/links/delete/:link_src", function($link_src){
+  $jwt = verify_jwt();  
+    if(is_string($jwt)){
+      echo $jwt;
+    }else{
+      $id_user = $jwt['data']->data->user;
+      echo protected_function(delete_link($id_user, $link_src), $jwt);
+    }
 });
 
+ // redirect
+ Route::get("/:id_user/:link_src", function($id_user, $link_src){
+ 
+  echo json_encode(search_links(['owner' => $id_user, 'link_src' => $link_src]));
 
-
-// parámetros insertar
-/* {
-  campo1: valor1,
-  campo2: valor2,
-  ...
-  campoN: valorN
-  
-} */
-
-/* Route::post("/create", function(){ // insertar
-  if(session_id() !== null){
-    # <code>  solo ejecuta el controlador
-    $data = json_decode(file_get_contents('php://input')); // capturar datos del http request
-    echo json_encode(['data' => $data]);
-
-    # </code>
-  }else{
-    header(501);
-    echo json_encode([
-      'error' => 'No hay sesión activa'
-    ]);
-  }
-}); */
-
-// parámetros modificar
-/* {
-  campo1: valor1,
-  campo2: valor2,
-  ...
-  campoN: valorN
-  
-} */
-Route::put("/links", function(){ // modificar
-  if(session_id() !== null){
-    # <code> solo ejecuta el controlador
-    $data = json_decode(file_get_contents('php://input')); // capturar datos del http request
-    echo json_encode(['data' => $data]);
-
-    # </code>
-  }else{
-    header(501);
-    echo json_encode([
-      'error' => 'No hay sesión activa'
-    ]);
-  }
 });
-
-// parámetros borrar
-/* {
-  campo1: [id]
-} */
-Route::delete("/links", function(){ // borrar
-  if(session_id() !== null){
-    # <code> solo ejecuta el controlador
-    $data = json_decode(file_get_contents('php://input')); // capturar datos del http request
-    echo json_encode(['data' => $data]);
-
-    # </code>
-  }else{
-    header(501);
-    echo json_encode([
-      'error' => 'No hay sesión activa'
-    ]);
-  }
-});
-
 ?>

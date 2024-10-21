@@ -148,6 +148,7 @@ function update_link($id_user, $link_src){
       "owner" => $id_user 
     ]);
 
+    var_dump($http_body); // remover
     // transformamos los parámetros en array
     $sets = (array)$http_body['data'];
     // var_dump($link);

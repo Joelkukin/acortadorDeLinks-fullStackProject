@@ -44,7 +44,7 @@ class Link {
 
   // Hay que resolver por que no impacta este codigo en la base de datos
   public function set($set_propierties){
-    
+    var_dump($set_propierties);
     
     $sets = [];
     $original = [];
@@ -55,7 +55,8 @@ class Link {
     } 
     $sets = implode(", ", $sets);
 
-    $sql = "UPDATE `$this->datatable` SET ".$sets." WHERE id = '$this->id'";
+    $sql = "UPDATE `$this->datatable` SET ".$sets." WHERE id LIKE $this->id";
+    var_dump($sql);
     $resultado = pdo_sql_query($GLOBALS['dbh'], $sql);
 
     return $this->get(
