@@ -34,12 +34,16 @@ function TablaCrud({ data , dataHandler}) {
   
   const [error, setError] = useState(null);
   const [popupVisible, setPopupVisible] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
+
   
   /* useEffect(() => {
     if (datos.length === 0) {
       setDatos(data);
     }
   }, [datos]); */
+
+/* Agregar un boton que al clickearlo abra un popup como de editar y que al darle aceptar, se cree un nuevo elemento en la tabla y se guarde en la base de datos */
 
   const handleEditar = (item) => {
     setEditarItem(item);
@@ -48,6 +52,7 @@ function TablaCrud({ data , dataHandler}) {
 
   /* console.log('array de objetos: ', data)
   console.log('datos: ', datos) */
+
 
   const handleBorrar = (item) => { // se le pasa el item del conjunto de items que se pidió a la api
     const nuevosDatos = datos.filter((dato) => dato.id !== item.id); // quitamos el item recibido, de los datos que nos dió la api
@@ -66,38 +71,70 @@ function TablaCrud({ data , dataHandler}) {
     console.log("Fila eliminada correctamente");
   };
 
-  const handleAceptarCambiosFila = () => {
-    // buscamos en el state el objeto a actualizar
-    const nuevosDatos = datos.map((dato) => {
-      if (dato.id === editarItem.id) { 
-        console.log("editarItem: ",editarItem)
-        // aca guardamos los cambios en la api
-
-        let http = {
-          uri: `/links/modify/${editarItem.link_src}`,
-          fetchData: {
-            method: 'PUT',
-            headers: {
-              'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({
-              link_src: editarItem.link_src,
-              link_target: editarItem.link_target,
-              owner: editarItem.owner,
-              qr_img: editarItem.qr_img
-            })
-          },
-          setError,
-          setRespServidor: setDatos
-        }
-        console.log("solicitud enviada: ",http)
-        ajaxReact(http)
-        return { ...dato, ...editarItem }; // Actualizamos el objeto con los cambios realizados
-      }
-      return dato;
+  const handleAgregar = () => {
+    setEditarItem({
+      id: '',
+      link_src: '',
+      link_target: '',
+      owner: '',
+      qr_img: ''
     });
+    setIsAdding(true);
+    setPopupVisible(true);
+  };
+
+  const handleAceptarCambiosFila = () => {
+    if (isAdding) {
+      // Lógica para agregar un nuevo elemento
+      ajaxReact({
+        uri: '/links/create',
+        fetchData: {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(editarItem)
+        },
+        setError,
+        setRespServidor: (nuevoItem) => {
+          setDatos([...datos, nuevoItem]);
+        }
+      });
+      setPopupVisible(false);
+    } else {// buscamos en el state el objeto a actualizar
+      const nuevosDatos = datos.map((dato) => {
+        if (dato.id === editarItem.id) { 
+          console.log("editarItem: ",editarItem)
+          // aca guardamos los cambios en la api
+
+          let http = {
+            uri: `/links/modify/${editarItem.link_src}`,
+            fetchData: {
+              method: 'PUT',
+              headers: {
+                'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify({
+                link_src: editarItem.link_src,
+                link_target: editarItem.link_target,
+                owner: editarItem.owner,
+                qr_img: editarItem.qr_img
+              })
+            },
+            setError,
+            setRespServidor: setDatos
+          }
+          console.log("solicitud enviada: ",http)
+          ajaxReact(http)
+          return { ...dato, ...editarItem }; // Actualizamos el objeto con los cambios realizados
+        }
+        return dato;
+      });
+    }
     setDatos(nuevosDatos); // Actualizamos el estado datos con los cambios
     setPopupVisible(false);
+    setIsAdding(false);
     console.log("Cambios guardados correctamente");
   };
 
@@ -132,12 +169,21 @@ function TablaCrud({ data , dataHandler}) {
                 <TableRow key={item.id} sx={{ '&:hover': { backgroundColor: '#f5f5f5' } }}>
                   <TableCell sx={{ padding: '1em' }}>{item.id}</TableCell>
                   <TableCell sx={{ padding: '1em' }}>{item.link_src}</TableCell>
-                  <TableCell sx={{ padding: '1em' }}>{item.link_target}</TableCell>
+                  <TableCell sx={{ padding: '1em' }}>
+                    <a href={
+                      "http://"+item.link_target
+                    }>{
+                      item.link_target
+                    }</a>
+                  </TableCell>
                   <TableCell sx={{ padding: '1em' }}>{item.owner}</TableCell>
                   <TableCell sx={{ padding: '1em' }}>{item.qr_img}</TableCell>
                   <TableCell sx={{ padding: '1em' }}>
-                    <Button onClick={() => handleBorrar(item)} sx={{ marginRight: '1em' }}>Borrar</Button>
-                    <Button onClick={() => handleEditar(item)}>Editar</Button>
+                    
+                    <Button 
+                    onClick={() => handleEditar(item)}>Editar</Button>
+                    <Button 
+                    onClick={() => handleBorrar(item)} sx={{ marginRight: '1em' }}>Borrar</Button>
                   </TableCell>
                 </TableRow>
               )
@@ -146,6 +192,14 @@ function TablaCrud({ data , dataHandler}) {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <Button 
+        variant="contained"
+        onClick={handleAgregar} 
+        sx={{ margin: '1em auto', display: 'block' }}
+      >
+        Agregar Nuevo Elemento
+      </Button>
 
       <Dialog open={popupVisible} onClose={handleCancelarCambiosFila}>
        <DialogTitle>Editar fila</DialogTitle>
@@ -186,8 +240,10 @@ function TablaCrud({ data , dataHandler}) {
          />
        </DialogContent>
        <DialogActions>
-         <button onClick={handleAceptarCambiosFila}>Aceptar</button>
-         <button onClick={handleCancelarCambiosFila}>Cancelar</button>
+         <button variant="contained"
+         onClick={handleAceptarCambiosFila}>Aceptar</button>
+         <button variant="contained"
+         onClick={handleCancelarCambiosFila}>Cancelar</button>
        </DialogActions>
      </Dialog>
     </div>

@@ -48,14 +48,21 @@ function LinksManager() {
 
   return (
     <>
-      <Button onClick={closeSession}>Cerrar Sesion</Button>
+      <Button 
+      variant="contained"
+      onClick={closeSession}
+      sx={{
+        position: 'fixed',
+        top: '20px',
+        left: '20px',
+        zIndex: 1000,
+      }}>Cerrar Sesion</Button>
       <h1 style={{ marginTop: '0em' }}>Link Manager</h1>
       {error ? (
         <p style={{ color: 'red' }}>{error}</p>
       ) : (
         <TablaCrud data={links} dataHandler={setLinks} />
       )}
-      <Button onClick={saveChanges}>Guardar Cambios</Button>
 
     </>
   );
